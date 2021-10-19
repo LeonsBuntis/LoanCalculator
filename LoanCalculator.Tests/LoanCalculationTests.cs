@@ -1,5 +1,6 @@
 ﻿using LoanCalculator.Controllers;
 using NUnit.Framework;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,9 +16,11 @@ namespace LoanCalculator.Tests
 
             var plan = await LoanCalculationController.CalculatePaybackAsync(amount, years);
 
-            var result = plan.Payments.Sum();
+            var expectedAmount = 10915m;
+            var expectedMonthlyPayment = 182m;
 
-            Assert.AreEqual(amount, result);
+            Assert.AreEqual(expectedAmount, Math.Round(plan.Payments.Sum(), 0));
+            Assert.AreEqual(expectedMonthlyPayment, Math.Round(plan.Payments.First(), 0));
         }
     }
 }
