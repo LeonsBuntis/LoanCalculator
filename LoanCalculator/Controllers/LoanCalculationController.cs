@@ -1,45 +1,49 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using LoanCalculator.Features.Loans;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace LoanCalculator.Controllers
 {
+    public interface ILoanPaybackPlanFactory
+    {
+        IRequest<PaybackPlan> CreateCommand(decimal loanAmount, int loanLengthInYears, LoanType loanType);
+    }
+
+    public class LoanPaybackPlanFactory : ILoanPaybackPlanFactory
+    {
+        public IRequest<PaybackPlan> CreateCommand(decimal loanAmount, int loanLengthInYears, LoanType loanType)
+        {
+            switch (loanType)
+            {
+                case LoanType.Housing:
+                    return new GetHousingLoanPaybackPlan(loanAmount, loanLengthInYears);
+                default:
+                    throw new ArgumentException($"Unsupported loan type: {loanType}", nameof(loanType));
+            }
+        }
+    }
+
     [ApiController]
     [Route("[controller]")]
     public class LoanCalculationController : ControllerBase
     {
-        public class PaybackPlan
+        private readonly IMediator _mediator;
+        private readonly ILoanPaybackPlanFactory _commandFactory;
+
+        public LoanCalculationController(IMediator mediator, ILoanPaybackPlanFactory commandFactory)
         {
-            public IEnumerable<decimal> Payments { get; init; }
+            _mediator = mediator;
+            _commandFactory = commandFactory;
         }
 
         [HttpGet]
-        public async Task<PaybackPlan> GetPaybackPlan(decimal amount, int years)
+        public async Task<PaybackPlan> GetPaybackPlan(decimal loanAmount, int loanLengthInYears, LoanType loanType)
         {
-            return await CalculatePaybackAsync(amount, years);
-        }
+            var command = _commandFactory.CreateCommand(loanAmount, loanLengthInYears, loanType);
 
-        public static async Task<PaybackPlan> CalculatePaybackAsync(decimal amount, int years)
-        {
-            var totalMonths = years * 12;
-            double yearlyInterestRate = 0.035;
-            double monthlyInterestRate = yearlyInterestRate / 12;
-
-            double r1 = monthlyInterestRate * Math.Pow(1 + monthlyInterestRate, totalMonths);
-            double r2 = Math.Pow(1 + monthlyInterestRate, totalMonths) - 1;
-            var monthlyPayment = (double)amount * (r1 / r2);
-
-            var rounding = ((decimal)Math.Round((monthlyPayment * 10000), 0)) / 10000;
-
-            var payments = new List<decimal>();
-
-            for (int i = 0; i < totalMonths; i++)
-            {
-                payments.Add(rounding);
-            }
-
-            return new PaybackPlan() { Payments = payments };
+            return await _mediator.Send(command);
         }
     }
 }
