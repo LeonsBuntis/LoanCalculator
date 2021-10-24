@@ -1,19 +1,24 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace LoanCalculator.Features.Loans
 {
     public class InterestRepository : IInterestRepository
     {
+        private readonly IDictionary<LoanType, decimal> _inmemoryDb = new Dictionary<LoanType, decimal>()
+        {
+            { LoanType.Housing, 0.035m }
+        };
+
         public async Task<decimal> GetYearlyInterestRate(LoanType loanType)
         {
-            switch (loanType)
+            if (!_inmemoryDb.TryGetValue(loanType, out decimal interestRate))
             {
-                case LoanType.Housing:
-                    return 0.035m;
-                default:
-                    throw new ArgumentException($"Unsupported loan type: {loanType}", nameof(loanType));
+                throw new ArgumentException($"Unsupported loan type: {loanType}", nameof(loanType));
             }
+
+            return interestRate;
         }
     }
 }
