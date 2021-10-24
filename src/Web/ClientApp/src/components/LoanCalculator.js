@@ -8,6 +8,7 @@ export class LoanCalculator extends Component {
         this.state = {
             loanAmount: 100000,
             loanLengthInYears: 15,
+            loanType: 'housing',
             paybackPlan: { payments: [] },
             loading: false
         };
@@ -61,10 +62,20 @@ export class LoanCalculator extends Component {
                 <h1 id="tabelLabel" >Loan calculator</h1>
                 <p>This component calculates payback plan for loans.</p>
                 <form>
-                    <div class="form-group">
-                        <label for="exampleFormControlInput1">Loan length in years</label>
+                    <div className="form-group">
+                        <label>Loan type</label>
+                        <select className="form-control"
+                            aria-label="Loan type"
+                            name="loanType"
+                            value={this.state.loanType}
+                            onChange={this.handleInputChange}>
+                            <option value="housing">Housing loan</option>
+                        </select>
+                    </div>
+                    <div className="form-group">
+                        <label>Loan length in years</label>
                         <input type="number"
-                            class="form-control"
+                            className="form-control"
                             min="1"
                             max="30"
                             name="loanLengthInYears"
@@ -72,13 +83,13 @@ export class LoanCalculator extends Component {
                             onChange={this.handleInputChange}
                             placeholder="Loan length in years" />
                     </div>
-                    <label for="exampleFormControlInput1">Loan amount</label>
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">$</span>
+                    <label>Loan amount</label>
+                    <div className="input-group mb-3">
+                        <div className="input-group-prepend">
+                            <span className="input-group-text">$</span>
                         </div>
                         <input type="number"
-                            class="form-control"
+                            className="form-control"
                             min="1"
                             max="1000000"
                             name="loanAmount"
@@ -87,10 +98,10 @@ export class LoanCalculator extends Component {
                             aria-label="Loan amount" />
                     </div>
 
-                    <input type="submit" class="btn btn-primary" onClick={this.getPaybackPlan} />
+                    <input type="submit" className="btn btn-primary" onClick={this.getPaybackPlan} />
                 </form>
 
-                <div class="mt-5">
+                <div className="mt-5">
                     {contents}
                 </div>
             </div>
@@ -101,7 +112,11 @@ export class LoanCalculator extends Component {
         e.preventDefault();
 
         this.setState({ paybackPlan: [], loading: true });
-        const respone = await fetch(`loancalculation?loanAmount=${this.state.loanAmount}&loanLengthInYears=${this.state.loanLengthInYears}`);
+        var uri = `loancalculation`
+            + `?loanAmount=${this.state.loanAmount}`
+            + `&loanLengthInYears=${this.state.loanLengthInYears}`
+            + `&loanType=${this.state.loanType}`;
+        const respone = await fetch(uri);
         const data = await respone.json();
         this.setState({ paybackPlan: data, loading: false });
     }
