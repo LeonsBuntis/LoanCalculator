@@ -9,15 +9,14 @@ export class FetchData extends Component {
             loanAmount: 100000,
             loanLengthInYears: 15,
             paybackPlan: { payments: [] },
-            loading: true
+            loading: false
         };
 
         this.handleInputChange = this.handleInputChange.bind(this);
         this.getPaybackPlan = this.getPaybackPlan.bind(this);
     }
 
-    componentDidMount() {
-    }
+    componentDidMount() { }
 
     handleInputChange(event) {
         const target = event.target;
@@ -29,7 +28,7 @@ export class FetchData extends Component {
         });
     }
 
-    static renderForecastsTable(payments) {
+    static renderPaybackPlan(payments) {
         return (
             <table className='table table-striped' aria-labelledby="tabelLabel">
                 <thead>
@@ -53,16 +52,47 @@ export class FetchData extends Component {
     render() {
         let contents = this.state.loading
             ? <p><em>Loading...</em></p>
-            : FetchData.renderForecastsTable(this.state.paybackPlan.payments);
+            : this.state.paybackPlan.payments.length > 0
+                ? FetchData.renderPaybackPlan(this.state.paybackPlan.payments)
+                : <></>;
 
         return (
             <div>
                 <h1 id="tabelLabel" >Loan calculator</h1>
                 <p>This component calculates payback plan for loans.</p>
-                <input type="number" name="loanAmount" value={this.state.loanAmount} onChange={this.handleInputChange}></input>
-                <input type="number" name="loanLengthInYears" value={this.state.loanLengthInYears} onChange={this.handleInputChange}></input>
-                <input type="submit" onClick={this.getPaybackPlan} />
-                {contents}
+                <form>
+                    <div class="form-group">
+                        <label for="exampleFormControlInput1">Loan length in years</label>
+                        <input type="number"
+                            class="form-control"
+                            min="1"
+                            max="30"
+                            name="loanLengthInYears"
+                            value={this.state.loanLengthInYears}
+                            onChange={this.handleInputChange}
+                            placeholder="Loan length in years" />
+                    </div>
+                    <label for="exampleFormControlInput1">Loan amount</label>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">$</span>
+                        </div>
+                        <input type="number"
+                            class="form-control"
+                            min="1"
+                            max="1000000"
+                            name="loanAmount"
+                            value={this.state.loanAmount}
+                            onChange={this.handleInputChange}
+                            aria-label="Loan amount" />
+                    </div>
+
+                    <input type="submit" class="btn btn-primary" onClick={this.getPaybackPlan} />
+                </form>
+
+                <div class="mt-5">
+                    {contents}
+                </div>
             </div>
         );
     }
