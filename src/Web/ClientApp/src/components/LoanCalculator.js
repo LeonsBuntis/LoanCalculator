@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
-export class FetchData extends Component {
-    static displayName = FetchData.name;
+export class LoanCalculator extends Component {
+    static displayName = LoanCalculator.name;
 
     constructor(props) {
         super(props);
@@ -53,7 +53,7 @@ export class FetchData extends Component {
         let contents = this.state.loading
             ? <p><em>Loading...</em></p>
             : this.state.paybackPlan.payments.length > 0
-                ? FetchData.renderPaybackPlan(this.state.paybackPlan.payments)
+                ? LoanCalculator.renderPaybackPlan(this.state.paybackPlan.payments)
                 : <></>;
 
         return (
