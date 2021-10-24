@@ -21,20 +21,49 @@ namespace UnitTests.ApplicationCore.Features
             decimal expectedMonths,
             decimal expectedAmount)
         {
-            var command = new GetHousingLoanPaybackPlan(amount, years);
+            var query = new GetHousingLoanPaybackPlan(amount, years);
 
             var interestRepositoryMock = new Mock<IInterestRepository>();
             interestRepositoryMock
-                .Setup(r => r.GetYearlyInterestRate(command.LoanType))
+                .Setup(r => r.GetYearlyInterestRate(query.LoanType))
                 .ReturnsAsync(0.035m);
 
             var handler = new GetHousingLoanPaybackPlanHandler(interestRepositoryMock.Object);
-            var plan = await handler.Handle(command, CancellationToken.None);
+            var plan = await handler.Handle(query, CancellationToken.None);
 
 
             Assert.AreEqual(expectedMonthlyPayment, Math.Round(plan.Payments.First(), 2));
             Assert.AreEqual(expectedMonths, plan.Payments.Count());
             Assert.AreEqual(expectedAmount, Math.Round(plan.Payments.Sum(), 2));
+        }
+
+        [TestCase(1, 1)]
+        [TestCase(100000, 5)]
+        [TestCase(1000000, 30)]
+        public async Task GetHousingLoanPaybackPlanValidator_ShouldAllow(
+            decimal amount,
+            int years)
+        {
+            var validator = new GetHousingLoanPaybackPlanValidator();
+
+            var query = new GetHousingLoanPaybackPlan(amount, years);
+            var result = validator.Validate(query);
+
+            Assert.IsTrue(result.IsValid);
+        }
+
+        [TestCase(0, 0)]
+        [TestCase(1000001, 31)]
+        public async Task GetHousingLoanPaybackPlanValidator_ShouldDeny(
+            decimal amount,
+            int years)
+        {
+            var validator = new GetHousingLoanPaybackPlanValidator();
+
+            var query = new GetHousingLoanPaybackPlan(amount, years);
+            var result = validator.Validate(query);
+
+            Assert.IsFalse(result.IsValid);
         }
     }
 }
