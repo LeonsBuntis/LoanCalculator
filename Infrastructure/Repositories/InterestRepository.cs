@@ -1,8 +1,10 @@
-﻿using System;
+﻿using ApplicationCore.Features.Entities;
+using ApplicationCore.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace LoanCalculator.Features.Loans
+namespace Infrastructure.Repositories
 {
     public class InterestRepository : IInterestRepository
     {

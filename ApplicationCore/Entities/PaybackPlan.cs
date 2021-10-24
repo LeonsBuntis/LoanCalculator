@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace LoanCalculator.Features.Loans
+namespace ApplicationCore.Features.Entities
 {
     public class PaybackPlan
     {

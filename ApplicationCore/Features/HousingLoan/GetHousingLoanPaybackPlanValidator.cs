@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace LoanCalculator.Features.Loans
+namespace ApplicationCore.Features.HousingLoan
 {
     public class GetHousingLoanPaybackPlanValidator : AbstractValidator<GetHousingLoanPaybackPlan>
     {

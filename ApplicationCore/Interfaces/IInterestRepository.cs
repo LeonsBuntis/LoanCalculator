@@ -1,6 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using ApplicationCore.Features.Entities;
+using System.Threading.Tasks;
 
-namespace LoanCalculator.Features.Loans
+namespace ApplicationCore.Interfaces
 {
     public interface IInterestRepository
     {

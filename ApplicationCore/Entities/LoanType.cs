@@ -1,4 +1,4 @@
-﻿namespace LoanCalculator.Features.Loans
+﻿namespace ApplicationCore.Features.Entities
 {
     public enum LoanType
     {

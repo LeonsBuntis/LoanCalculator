@@ -18,5 +18,3 @@ Create a simple application which can be used for calculating the cost of a hous
 We expect that you demonstrate reasonable use of the available language functionality for abstraction, interfaces, inheritance, a good class structure and show a good programming practice. 
 
 We are focused on code quality and good design.
-
-Please send your solution to your contact in Visma.

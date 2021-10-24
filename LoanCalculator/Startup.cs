@@ -6,10 +6,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using FluentValidation;
 using MediatR;
-using LoanCalculator.Features.Loans;
-using LoanCalculator.Controllers;
+using Infrastructure.Repositories;
+using ApplicationCore.Interfaces;
+using ApplicationCore.Features.HousingLoan;
+using ApplicationCore.Behaviours;
 
-namespace LoanCalculator
+namespace Web
 {
     public class Startup
     {
@@ -20,7 +22,6 @@ namespace LoanCalculator
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
@@ -31,16 +32,14 @@ namespace LoanCalculator
                 configuration.RootPath = "ClientApp/build";
             });
 
-            services.AddValidatorsFromAssembly(typeof(Startup).Assembly);
+            services.AddValidatorsFromAssembly(typeof(GetHousingLoanPaybackPlanValidator).Assembly);
 
-            services.AddMediatR(typeof(Startup));
+            services.AddMediatR(typeof(GetHousingLoanPaybackPlan));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 
-            services.AddTransient<ILoanPaybackPlanFactory, LoanPaybackPlanFactory>();
             services.AddTransient<IInterestRepository, InterestRepository>();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())

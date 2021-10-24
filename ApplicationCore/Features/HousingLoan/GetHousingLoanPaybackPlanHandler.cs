@@ -1,10 +1,12 @@
-﻿using MediatR;
+﻿using ApplicationCore.Features.Entities;
+using ApplicationCore.Interfaces;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace LoanCalculator.Features.Loans
+namespace ApplicationCore.Features.HousingLoan
 {
     public class GetHousingLoanPaybackPlanHandler : IRequestHandler<GetHousingLoanPaybackPlan, PaybackPlan>
     {
@@ -26,16 +28,16 @@ namespace LoanCalculator.Features.Loans
             };
         }
 
-        public IEnumerable<decimal> CalculateSeriesMonthlyPayments(decimal loanAmount, int loanLengthInYears, decimal yearlyInterestRate)
+        private IEnumerable<decimal> CalculateSeriesMonthlyPayments(decimal loanAmount, int loanLengthInYears, decimal yearlyInterestRate)
         {
             double totalMonths = loanLengthInYears * 12;
-            decimal monthlyInterestRate = yearlyInterestRate / 12;
+            double monthlyInterestRate = (double)yearlyInterestRate / 12;
 
-            decimal r1 = monthlyInterestRate * (decimal)Math.Pow((double)(1m + monthlyInterestRate), totalMonths);
-            decimal r2 = (decimal)Math.Pow((double)(1 + monthlyInterestRate), totalMonths) - 1;
-            decimal monthlyPayment = loanAmount * (r1 / r2);
+            double r1 = monthlyInterestRate * Math.Pow((1 + monthlyInterestRate), totalMonths);
+            double r2 = Math.Pow((1 + monthlyInterestRate), totalMonths) - 1;
+            double monthlyPayment = (double)loanAmount * (r1 / r2);
 
-            var rounding = Math.Round((monthlyPayment * 10000), 0) / 10000;
+            decimal rounding = (decimal)Math.Round(monthlyPayment, 4);
 
             var payments = new List<decimal>();
 

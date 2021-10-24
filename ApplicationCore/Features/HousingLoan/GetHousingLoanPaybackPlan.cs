@@ -1,6 +1,7 @@
-﻿using MediatR;
+﻿using ApplicationCore.Features.Entities;
+using MediatR;
 
-namespace LoanCalculator.Features.Loans
+namespace ApplicationCore.Features.HousingLoan
 {
     public class GetHousingLoanPaybackPlan : IRequest<PaybackPlan>
     {
